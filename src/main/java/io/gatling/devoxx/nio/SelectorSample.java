@@ -14,7 +14,6 @@ public class SelectorSample {
     var selector = Selector.open();
     var serverSocket = ServerSocketChannel.open();
     serverSocket.bind(new InetSocketAddress(8080));
-    serverSocket.configureBlocking(false);
     serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
     while (true) {
@@ -22,21 +21,16 @@ public class SelectorSample {
       for (var key : selector.selectedKeys()) {
         if (key.isAcceptable()) {
           var clientSocket = serverSocket.accept();
-          clientSocket.configureBlocking(false);
           clientSocket.register(selector, SelectionKey.OP_READ);
-        }
-
-        if (key.isReadable()) {
+        } else if (key.isReadable()) {
           var clientSocket = (SocketChannel) key.channel();
           var buffer = ByteBuffer.allocate(1024);
-          // we could read until returns 0
           int r = clientSocket.read(buffer);
           if (r == -1) {
             // EOF
             return;
           }
           buffer.flip();
-          // echo
           clientSocket.write(buffer);
         }
       }

@@ -9,7 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
-public class NettyServer {
+public class NettyTcpEchoServer {
 
   @ChannelHandler.Sharable
   static class EchoHandler extends ChannelInboundHandlerAdapter {
