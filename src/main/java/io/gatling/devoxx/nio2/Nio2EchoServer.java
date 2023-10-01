@@ -8,7 +8,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.TimeUnit;
 
-public class AsynchronousServerSocketChannelSample {
+public class Nio2EchoServer {
 
   public static void main(String[] args) throws IOException {
     var serverSocketChannel = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8080));
@@ -22,9 +22,11 @@ public class AsynchronousServerSocketChannelSample {
 
       @Override
       public void failed(Throwable exc, Void attachment) {
-        // TODO
+        exc.printStackTrace();
       }
     });
+
+    while (true);
   }
 
   private static void read(AsynchronousSocketChannel clientSocketChannel) {
@@ -60,7 +62,6 @@ public class AsynchronousServerSocketChannelSample {
 
       @Override
       public void failed(Throwable exc, Object attachment) {
-        // TODO
         try {
           clientSocketChannel.close();
         } catch (IOException e) {

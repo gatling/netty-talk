@@ -1,4 +1,4 @@
-package io.gatling.devoxx.netty;
+package io.gatling.devoxx.netty.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -9,10 +9,13 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
-public class NettyServer {
+public class NettyTcpEchoServer {
 
   @ChannelHandler.Sharable
   static class EchoHandler extends ChannelInboundHandlerAdapter {
+
+    private static final EchoHandler INSTANCE = new EchoHandler();
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
       ByteBuf in = (ByteBuf) msg;
@@ -37,13 +40,12 @@ public class NettyServer {
       ServerBootstrap b = new ServerBootstrap()
         .group(parentGroup, childGroup)
         .channel(NioServerSocketChannel.class)
-        .localAddress(new InetSocketAddress(9999))
-        .childHandler(new EchoHandler());
+        .localAddress(new InetSocketAddress(8080))
+        .childHandler(EchoHandler.INSTANCE);
 
       ChannelFuture f = b.bind().sync();
       f.channel().closeFuture().sync();
     } finally {
-      System.out.println("shutdownGracefully");
       childGroup.shutdownGracefully().sync();
       parentGroup.shutdownGracefully().sync();
     }
