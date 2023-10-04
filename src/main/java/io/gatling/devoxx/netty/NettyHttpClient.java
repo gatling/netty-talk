@@ -117,7 +117,7 @@ public class NettyHttpClient implements AutoCloseable {
     }
 
     private String printErrors() {
-        return errors.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue().get()).collect(Collectors.joining(", ", "[", "]"));
+        return errors.entrySet().stream().map(e -> e.getKey() + " -> " + e.getValue().get()).collect(Collectors.joining(",\n", "[", "]"));
     }
 
     public NettyHttpClient(String hostname, int port, int nbConnections, int requestsPerConnection) {
@@ -167,7 +167,12 @@ public class NettyHttpClient implements AutoCloseable {
         var durationMs = Duration.ofNanos(System.nanoTime() - start).toMillis();
         var requestCount = nbConnections * requestsPerConnection;
         var throughput = (double) requestCount / durationMs * 1000;
-        LOGGER.info("Performed {} requests in {}ms, avg throughput={} errors={}", requestCount, durationMs, throughput, printErrors());
+        LOGGER.info("Performed {} requests in {}ms, avg throughput={}", requestCount, durationMs, throughput);
+
+        if (!errors.isEmpty()) {
+            throw new Exception("Experienced errors:\n" + printErrors());
+        }
+
     }
 
     private void connect(int userId, Bootstrap bootstrap) {
