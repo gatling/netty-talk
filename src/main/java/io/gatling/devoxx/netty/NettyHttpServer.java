@@ -43,7 +43,7 @@ public class NettyHttpServer implements AutoCloseable {
     public Channel start(int port) throws InterruptedException {
         var bootstrap = new ServerBootstrap()
                 .group(parentGroup, childGroup)
-                .option(ChannelOption.SO_BACKLOG, 1024)
+                .option(ChannelOption.SO_BACKLOG, 4000)
                 .channel(Transport.RESOLVED.serverChannelClass())
                 .localAddress(new InetSocketAddress(port))
                 .childHandler(new ChannelInitializer<>() {
