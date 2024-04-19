@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 import java.net.InetSocketAddress;
@@ -28,6 +29,8 @@ class Server implements AutoCloseable {
         var selfSignedCertificate = new SelfSignedCertificate();
         sslContext = SslContextBuilder
                 .forServer(selfSignedCertificate.certificate(), selfSignedCertificate.privateKey())
+                // use static BoringSSL (see classpath)
+                .sslProvider(SslProvider.OPENSSL)
                 .build();
     }
 
