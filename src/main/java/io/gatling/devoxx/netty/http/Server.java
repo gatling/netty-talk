@@ -7,14 +7,29 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ForkJoinPool;
 
 class Server implements AutoCloseable {
 
     private final EventLoopGroup parentGroup = new NioEventLoopGroup(1);
     private final EventLoopGroup childGroup = new NioEventLoopGroup();
+
+    private final SslContext sslContext;
+
+    public Server() throws Exception {
+        // create the SslContext
+        var selfSignedCertificate = new SelfSignedCertificate();
+        sslContext = SslContextBuilder
+                .forServer(selfSignedCertificate.certificate(), selfSignedCertificate.privateKey())
+                .build();
+    }
 
     public Channel start(int port) throws InterruptedException {
         var bootstrap = new ServerBootstrap()
@@ -25,8 +40,15 @@ class Server implements AutoCloseable {
                 .childHandler(new ChannelInitializer<>() {
                     @Override
                     protected void initChannel(Channel ch) {
+                        // create a SSLEngine for this channel
+                        var sslEngine = sslContext.newEngine(ch.alloc());
+                        // WARNING: on the client side, you MUST enable hostname verification in production
+                        // sslEngine.getSSLParameters().setEndpointIdentificationAlgorithm("HTTPS");
                         ch.pipeline()
-                                .addLast(new HttpServerCodec(),
+                                .addLast(
+                                        // add the SslHandler and offload to the FJP
+                                        new SslHandler(sslEngine, ForkJoinPool.commonPool()),
+                                        new HttpServerCodec(),
                                         new HttpObjectAggregator(Integer.MAX_VALUE),
                                         AppHandler.INSTANCE);
                     }
