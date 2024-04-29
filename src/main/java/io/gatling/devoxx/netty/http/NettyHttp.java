@@ -8,7 +8,7 @@ public class NettyHttp {
         var hostname = "localhost";
         var port = 8080;
         var nbConnections = 1_000;
-        var requestsPerConnection = 1_000;
+        var requestsPerConnection = 5_000;
 
         var start = System.nanoTime();
         try(var server = new Server()) {

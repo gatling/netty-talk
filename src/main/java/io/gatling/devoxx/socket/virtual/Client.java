@@ -18,13 +18,7 @@ public class Client {
     public Client(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
-        this.request = STR. """
-            GET /json HTTP/1.1
-            host: \{hostname}:\{port}
-            user-agent: curl/7.87.0
-            accept: */*
-
-            """ .stripIndent().getBytes(StandardCharsets.US_ASCII);
+        this.request = ("GET /json HTTP/1.1\nhost: " + hostname + ":" + port + "\nuser-agent: curl/7.87.0\naccept: */*\n\n").getBytes(StandardCharsets.US_ASCII);
     }
 
     public void run(int nbConnections, int requestsPerConnection) throws Exception {

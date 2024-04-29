@@ -45,13 +45,7 @@ public class Server implements AutoCloseable {
         }
     }
 
-    private static final String HTTP_RESPONSE =
-            STR."""
-            HTTP/1.1 200 OK
-            content-length: \{Payload.JSON_1K.length()}
-            content-type: application/json
-
-            \{Payload.JSON_1K}""";
+    private static final String HTTP_RESPONSE = "HTTP/1.1 200 OK\ncontent-length: " + Payload.JSON_1K.length() + "\ncontent-type: application/json\n\n" + Payload.JSON_1K;
 
     private void handle(Socket socket) {
         try (var s = socket) {

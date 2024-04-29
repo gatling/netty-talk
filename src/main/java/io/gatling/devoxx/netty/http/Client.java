@@ -52,7 +52,7 @@ class Client implements AutoCloseable {
                     .connect(new InetSocketAddress(port));
         }
 
-        if (!latch.await(20, TimeUnit.SECONDS)) {
+        if (!latch.await(2, TimeUnit.MINUTES)) {
             throw new TimeoutException();
         }
     }
