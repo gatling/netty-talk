@@ -2,7 +2,7 @@ package io.gatling.devoxx.netty.http;
 
 import java.time.Duration;
 
-class NettyHttp {
+public class NettyHttp {
     public static void main(String[] args) throws Exception {
 
         var hostname = "localhost";
