@@ -35,6 +35,7 @@ class Client implements AutoCloseable {
 
         var bootstrap = new Bootstrap()
                 .group(group)
+                .option(ChannelOption.TCP_NODELAY, Boolean.TRUE)
                 .channel(NioSocketChannel.class);
 
         for (int i = 0; i < nbConnections; i++) {
